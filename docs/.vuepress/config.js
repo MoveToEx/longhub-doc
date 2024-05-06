@@ -12,6 +12,10 @@ export default defineUserConfig({
     logo: '/images/logo.png',
     logoDark: '/images/logo-dark.png',
 
+    head: [
+      ['link', { rel: 'icon', href: '/favicon.png' } ]
+    ],
+
     navbar: [
       '/',
       {

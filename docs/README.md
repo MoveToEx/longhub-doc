@@ -3,12 +3,8 @@ home: true
 title: LONG Doc
 heroImage: /images/logo.png
 actions:
-  - text: Get Started
-    link: /getting-started.html
-    type: primary
-
-  - text: Introduction
-    link: https://vuejs.press/guide/introduction.html
+  - text: Main site
+    link: https://longhub.top
     type: secondary
 
 features:
