@@ -12,7 +12,7 @@ Read [Schema](schema.html) first if you haven't read it.
 
 ## CRUD
 
-### `GET` /api/post/
+### GET `/api/post/`
 
 No permission required.  
 
@@ -26,10 +26,10 @@ Query parameters:
 Response type:
 
 ```typescript
-{
+type PostResponse = {
     count: number;      // Total posts
     data: Post[];       // Requested data
-}
+};
 ```
 
 ::: details Example
@@ -51,7 +51,7 @@ Content-Type: application/json
       "text": "",
       "image": "7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
       "imageHash": "1111111111011001111111111000011111111111000001101111111101111010",
-      "aggr": 0,
+      "rating": "none",
       "createdAt": "2024-05-04T04:06:29.000Z",
       "updatedAt": "2024-05-04T04:06:29.000Z",
       "uploaderId": 1,
@@ -85,7 +85,7 @@ Content-Type: application/json
 ```
 :::
 
-### `GET` /api/post/\[id\]
+### GET `/api/post/\[id\]`
 
 Get a specific post.
 
@@ -94,6 +94,8 @@ Route parameters:
 | Name  |      Desc.       |
 | :---: | :--------------: |
 | `id`  | Post ID to query |
+
+Response type: `Post`
 
 ::: details Example
 Request:
@@ -111,7 +113,7 @@ Content-Type: application/json
     "text": "",
     "image": "7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
     "imageHash": "1111111111011001111111111000011111111111000001101111111101111010",
-    "aggr": 0,
+    "rating": "none",
     "createdAt": "2024-05-04T04:06:29.000Z",
     "updatedAt": "2024-05-04T04:06:29.000Z",
     "uploaderId": 1,
@@ -144,7 +146,7 @@ Content-Type: application/json
 :::
 
 
-### `POST` /api/post/
+### POST `/api/post/`
 
 Creates a new post.
 
@@ -164,7 +166,7 @@ Metadata schema:
 {
     text: string;
     tags: string[];
-    aggr: number;
+    rating: Rating;
 }
 ```
 
@@ -174,6 +176,13 @@ Status codes:
 - `200 OK` if insertion succeeds.
 - `400 Bad Request` if request body does not correspond to schema.
 - `409 Conflict` if similar images (hash diff < 8bits) are found. 
+
+Response type:
+
+```typescript
+type PostUploadResponse = Post;
+type PostConflictResponse = Pick<Post, 'image' | 'imageURL' | 'id' | 'imageHash' >[];
+```
 
 :::details Example
 
@@ -194,7 +203,7 @@ Content-Type: application/json
 
 {
     "text": "nmsl",
-    "aggr": 0.5,
+    "rating": "none",
     "tags": [
         "monochrome"
     ]
@@ -217,7 +226,7 @@ content-type: application/json
     "imageURL": "https://img.longhub.top/posts/494784be-70a8-4236-8879-67c229644d98.jpg",
     "id": "494784be-70a8-4236-8879-67c229644d98",
     "text": "nmsl",
-    "aggr": 0.5,
+    "rating": "none",
     "imageHash": "1100001111000010010010100000101001101101011010001011011100101001",
     "image": "494784be-70a8-4236-8879-67c229644d98.jpg",
     "updatedAt": "2024-02-09T01:07:23.642Z",
@@ -243,7 +252,7 @@ content-type: application/json
 ```
 :::
 
-### `PUT` /api/post/\[id\]
+### PUT `/api/post/\[id\]`
 
 Modifies metadata of a post.
 Requires edit post permission.
@@ -256,7 +265,7 @@ Request body schema:
 {
     text?: string;
     tags?: string[];
-    aggr?: number;
+    rating?: Rating;
 }
 ```
 
@@ -266,6 +275,8 @@ Status codes:
 - `200 OK` if the post has been successfully modified.
 - `400 Bad Request` if the given metadata is illegal.
 - `404 Not Found` if the desinated post does not exist.
+
+Response type: `Post`
 
 :::details Example
 Modify post `bdf5394e-bbb9-4412-988c-3566ee14fbe2`, set text to `wcnm` and leave other fields unchanged:
@@ -289,7 +300,7 @@ content-type: application/json
   "text": "wcnm",
   "image": "bdf5394e-bbb9-4412-988c-3566ee14fbe2.png",
   "imageHash": "1000000000111001011011101011110010001100111101100110010111000101",
-  "aggr": 0,
+  "rating": "none",
   "createdAt": "2024-03-28T14:21:46.000Z",
   "updatedAt": "2024-03-28T14:21:46.000Z",
   "uploaderId": 1,
@@ -300,7 +311,7 @@ content-type: application/json
 ```
 :::
 
-### `DELETE` /api/post/\[id\]
+### DELETE `/api/post/\[id\]`
 
 Deletes a post.
 
@@ -312,7 +323,7 @@ Route parameters:
 | :---: | :---------------: |
 | `id`  | Post ID to delete |
 
-Returns a single `"ok"` when succeeds.
+Response type: `"ok"`
 
 ::: details Example
 Request:
@@ -332,7 +343,7 @@ content-type: application/json
 
 ## Search
 
-### `POST` /api/post/search
+### POST `/api/post/search`
 
 Accepts: `application/json`
 
@@ -348,7 +359,7 @@ Request body schema:
 
 ```typescript
 interface Selector {
-    type: 'text' | 'id' | 'tag' | 'aggr';
+    type: 'text' | 'id' | 'tag' | 'uploader' | 'rating';
                             // The type of the selector, also the post field that this constraint is applied to.
     op?: string;            // See below for explainatory expressions.
     value: string | number; // Right operand of the operation.
@@ -357,10 +368,10 @@ interface Selector {
 type RequetSchema = Selector[];
 ```
 
-Response schema:
+Response type:
 
 ```typescript
-{
+type PostSearchResponse = {
     count: number;
     data: Post[];
 }
@@ -408,26 +419,21 @@ Operators:
 - `exclude`: `post.tags.all(tag => tag.name != value)`
 
 
-#### Aggr selector
+#### Rating selector
 
 ```typescript
-interface AggrSelector extends Selector {
-    type: 'aggr';
-    op: 'gt' | 'gte' | 'ge' | 'lt' | 'lte' | 'le' | 'eq' | 'ne';
-    value: number;
+interface RatingSelector extends Selector {
+    type: 'rating';
+    op: 'eq';
+    value: Rating;
 }
 ```
 
 Operators:
-- `gt`: `post.aggr > value`
-- `ge`, `geq`: `post.aggr >= value`
-- `lt`: `post.agggr < value`
-- `le`, `leq`: `post.aggr <= value`
-- `eq`: `post.aggr == value`
-- `ne`: `post.aggr != value`
+- `eq`: `post.rating == value`
 
 :::details Example
-Search for posts that are tagged with `monochrome`, with an aggressiveness less than 6, limited to 1 result:
+Search for posts that are tagged with `monochrome`, rated as moderate, limited to 1 result:
 
 ```http
 POST https://longhub.top/api/post/search?limit=1
@@ -440,9 +446,9 @@ Content-Type: application/json
         "value": "monochrome"
     },
     {
-        "type": "aggr",
-        "op": "lt",
-        "value": 6
+        "type": "rating",
+        "op": "eq",
+        "value": "moderate"
     }
 ]
 ```
@@ -460,7 +466,7 @@ Content-Type: application/json
       "text": "你这打mai的傻逼",
       "image": "00059cd3-c340-40e8-927b-301ad116bf18.jpg",
       "imageHash": "0011111000010111001100001101101010010000111110000001011010100001",
-      "aggr": 3,
+      "rating": "moderate",
       "createdAt": "2023-12-29T13:45:24.000Z",
       "updatedAt": "2024-02-05T05:22:49.000Z",
       "uploaderId": null,
@@ -473,7 +479,7 @@ Content-Type: application/json
 ```
 :::
 
-### `POST` /api/post/similar
+### POST `/api/post/similar`
 
 Search for similar images.
 

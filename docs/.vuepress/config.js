@@ -51,6 +51,10 @@ export default defineUserConfig({
                 link: '/api/post'
               },
               {
+                text: 'Tags',
+                link: '/api/tags'
+              },
+              {
                 text: 'Account',
                 link: '/api/account'
               }

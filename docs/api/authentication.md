@@ -40,7 +40,7 @@ If you encounter a compromise, reset your access key at account page.
 This is also the way you get authenticated when using web client of LONG Hub.  
 Although web client uses the Server Actions of Next.js, they all identify users by cookies.  
 
-Refer to [`POST` /account/login](account.html#post-account-login) for more details.
+Refer to [`POST` /api/account/login](account.html#post-api-account-login) for more details.
 
 Sessions on LONG Hub are stateless, which means sessions cannot be directly manipulated on the server. All the session data is encrypted, signed, and saved to the cookie named `nmsl_cookie`.  
 To log out, simply clear the cookie named `nmsl_cookie`.

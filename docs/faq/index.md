@@ -20,12 +20,6 @@ Currently there's no way of solving this. We suggest saving the image to gif fil
 
 No. A post cannot have its image updated. To achieve similar goals you need to delete the post and create a new post with the same metadata.
 
-#### Is there any limitation on things like tags?
-
-All the limitations are described below:
-- `/post/search` endpoint (including Search page) requires total selector count to be not greater than 24.
-- 
-
 ## Content-wise
 
 #### How to decide which duplicate shall be deleted?

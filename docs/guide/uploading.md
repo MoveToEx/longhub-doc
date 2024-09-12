@@ -14,11 +14,11 @@ There are some requirements on the image:
 
 ## Tips
 
-You can add multiple images to your upload queue by dragging them onto the selection area or selecting them in the file selection dialog.
+You can add multiple images to your upload queue by dragging them onto the selection area or selecting them in the file selection dialog.  
+
+The dragging area supports pasting with <kbd>Ctrl</kbd>+<kbd>C</kbd>. 
 
 You can search for a condition in the upload page by entering metadata and clicking on the third button (_Quick search_).
 
 Note that when entering tags, the text being entered does not count as a tag.
 You have to press enter or select a tag from the dropdown menu (making the text become a chip) to actually enter a tag.  
-
-The rating component used in Aggressiveness can be set to 0 by clicking the already selected value again.  
