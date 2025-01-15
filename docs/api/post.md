@@ -14,8 +14,6 @@ Read [Schema](schema.html) first if you haven't read it.
 
 ### GET `/api/post/`
 
-No permission required.  
-
 Query parameters:
 
 |   Name   |        Description        |
@@ -47,45 +45,44 @@ Content-Type: application/json
   "count": 1987,
   "data": [
     {
-      "id": "7b702e5e-a0c1-4e47-8375-5c0666db761b",
-      "text": "",
-      "image": "7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
-      "imageHash": "1111111111011001111111111000011111111111000001101111111101111010",
-      "rating": "none",
-      "createdAt": "2024-05-04T04:06:29.000Z",
-      "updatedAt": "2024-05-04T04:06:29.000Z",
-      "uploaderId": 1,
-      "tags": [
-        {
-          "id": 1,
-          "name": "notext"
-        },
-        {
-          "id": 6,
-          "name": "monochrome"
-        },
-        {
-          "id": 9,
-          "name": "meaningless"
-        },
-        {
-          "id": 82,
-          "name": "mirrored"
+        "id": "7b702e5e-a0c1-4e47-8375-5c0666db761b",
+        "text": "",
+        "image": "7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
+        "imageURL": "https://r2.longhub.top/posts/7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
+        "imageHash": "1111111111011001111111111000011111111111000001101111111101111010",
+        "rating": "none",
+        "createdAt": "2024-05-04T04:06:29.000Z",
+        "updatedAt": "2024-05-04T04:06:29.000Z",
+        "uploaderId": 1,
+        "tags": [
+            {
+                "id": 1,
+                "name": "notext"
+            },
+            {
+                "id": 6,
+                "name": "monochrome"
+            },
+            {
+                "id": 9,
+                "name": "meaningless"
+            },
+            {
+                "id": 82,
+                "name": "mirrored"
+            }
+        ],
+        "uploader": {
+            "id": 1,
+            "name": "MoveToEx"
         }
-      ],
-      "uploader": {
-        "id": 1,
-        "name": "MoveToEx"
-      },
-      "imageURL": "https://img.longhub.top/posts/7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
-      "imagePath": "/opt/longhub/media/posts/7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg"
     }
   ]
 }
 ```
 :::
 
-### GET `/api/post/\[id\]`
+### GET `/api/post/[id]`
 
 Get a specific post.
 
@@ -112,35 +109,34 @@ Content-Type: application/json
     "id": "7b702e5e-a0c1-4e47-8375-5c0666db761b",
     "text": "",
     "image": "7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
+    "imageURL": "https://r2.longhub.top/posts/7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
     "imageHash": "1111111111011001111111111000011111111111000001101111111101111010",
     "rating": "none",
     "createdAt": "2024-05-04T04:06:29.000Z",
     "updatedAt": "2024-05-04T04:06:29.000Z",
     "uploaderId": 1,
     "tags": [
-    {
-        "id": 1,
-        "name": "notext"
-    },
-    {
-        "id": 6,
-        "name": "monochrome"
-    },
-    {
-        "id": 9,
-        "name": "meaningless"
-    },
-    {
-        "id": 82,
-        "name": "mirrored"
-    }
+        {
+            "id": 1,
+            "name": "notext"
+        },
+        {
+            "id": 6,
+            "name": "monochrome"
+        },
+        {
+            "id": 9,
+            "name": "meaningless"
+        },
+        {
+            "id": 82,
+            "name": "mirrored"
+        }
     ],
     "uploader": {
-    "id": 1,
-    "name": "MoveToEx"
-    },
-    "imageURL": "https://img.longhub.top/posts/7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg",
-    "imagePath": "/opt/longhub/media/posts/7b702e5e-a0c1-4e47-8375-5c0666db761b.jpg"
+        "id": 1,
+        "name": "MoveToEx"
+    }
 }
 ```
 :::
@@ -154,34 +150,48 @@ Requires create new post permission.
 
 Accepts: `multipart/form-data`
 
-|   Field    |                          Desc.                          |
-| :--------: | :-----------------------------------------------------: |
-|  `image`   |          Image file. Must be less than 4 MiB.           |
-| `metadata` |           JSON string. See below for details.           |
-|  `force`   | Whether to ignore similar images. (0 for no, 1 for yes) |
+| Form Field |    Content Type    |                       Description                       |
+| :--------: | :----------------: | :-----------------------------------------------------: |
+|  `image`   |     `image/*`      |          Image file. Must be less than 4 MiB.           |
+| `metadata` | `application/json` |    Metadata of the new post. See below for details.     |
+|  `force`   |    `text/plain`    | Whether to ignore similar images. (0 for no, 1 for yes) |
+
+The `image` file does not require a valid file name. Its file extension will be inferred from its `Content-Type` header.
 
 Metadata schema:
 
 ```typescript
-{
-    text: string;
-    tags: string[];
-    rating: Rating;
-}
+type Metadata = {
+    text?: string;
+    tags?: string[];
+    rating?: Rating;
+};
+```
+
+The following defaults will be used if a field is not present in the metadata:
+
+```typescript
+const DefaultMetadata = {
+    text: '',
+    tags: [],
+    rating: 'none'
+};
 ```
 
 New tags will be created if non-existing tag names are found.  
 
 Status codes:
-- `200 OK` if insertion succeeds.
+- `201 Created` if creation succeeds.
 - `400 Bad Request` if request body does not correspond to schema.
-- `409 Conflict` if similar images (hash diff < 8bits) are found. 
+- `409 Conflict` if similar images (hash difference less than 4 bits) are found. 
 
 Response type:
 
 ```typescript
-type PostUploadResponse = Post;
-type PostConflictResponse = Pick<Post, 'image' | 'imageURL' | 'id' | 'imageHash' >[];
+type PostUploadResponse = Omit<Post, 'uploader'> & {
+    uploader: Self
+};
+type PostConflictResponse = Pick<Post, 'image' | 'imageURL' | 'id' | 'imageHash'>[];
 ```
 
 :::details Example
@@ -223,15 +233,31 @@ HTTP/1.1 200 OK
 content-type: application/json
 
 {
-    "imageURL": "https://img.longhub.top/posts/494784be-70a8-4236-8879-67c229644d98.jpg",
     "id": "494784be-70a8-4236-8879-67c229644d98",
     "text": "nmsl",
-    "rating": "none",
-    "imageHash": "1100001111000010010010100000101001101101011010001011011100101001",
     "image": "494784be-70a8-4236-8879-67c229644d98.jpg",
+    "imageURL": "https://r2.longhub.top/posts/494784be-70a8-4236-8879-67c229644d98.jpg",
+    "imageHash": "1100001111000010010010100000101001101101011010001011011100101001",
+    "aggr": 0,
+    "rating": "none",
+    "createdAt": "2024-02-09T01:07:23.642Z",
     "updatedAt": "2024-02-09T01:07:23.642Z",
-    "createdAt": "2024-02-09T01:07:23.638Z",
-    "uploaderId": 1
+    "uploaderId": 1,
+    "tags": [
+        {
+            "id": 6,
+            "name": "monochrome"
+        }
+    ],
+    "uploader": {
+        "id": 1,
+        "email": null,
+        "name": "MoveToEx",
+        "permission": 65310,
+        "accessKey": "<OMITTED>",
+        "passwordHash": "<OMITTED>",
+        "createdAt": "2024-02-05T05:31:19.000Z"
+    }
 }
 ```
 
@@ -243,7 +269,7 @@ content-type: application/json
 
 [
     {
-        "imageURL": "https://img.longhub.top/posts/494784be-70a8-4236-8879-67c229644d98.jpg",
+        "imageURL": "https://r2.longhub.top/posts/494784be-70a8-4236-8879-67c229644d98.jpg",
         "id": "494784be-70a8-4236-8879-67c229644d98",
         "imageHash": "1100001111000010010010100000101001101101011010001011011100101001",
         "image": "494784be-70a8-4236-8879-67c229644d98.jpg"
@@ -252,23 +278,21 @@ content-type: application/json
 ```
 :::
 
-### PUT `/api/post/\[id\]`
+### PUT `/api/post/[id]`
 
-Modifies metadata of a post.
+Modifies metadata of a post.  
 Requires edit post permission.
-
 Accepts: `application/json`
 
 Request body schema:
 
 ```typescript
-{
+type UpdateSchema = {
     text?: string;
     tags?: string[];
     rating?: Rating;
 }
 ```
-
 Fields not present in request body will remain unchanged.
 
 Status codes:
@@ -296,22 +320,22 @@ HTTP/1.1 200 OK
 content-type: application/json
 
 {
-  "id": "bdf5394e-bbb9-4412-988c-3566ee14fbe2",
-  "text": "wcnm",
-  "image": "bdf5394e-bbb9-4412-988c-3566ee14fbe2.png",
-  "imageHash": "1000000000111001011011101011110010001100111101100110010111000101",
-  "rating": "none",
-  "createdAt": "2024-03-28T14:21:46.000Z",
-  "updatedAt": "2024-03-28T14:21:46.000Z",
-  "uploaderId": 1,
-  "imageURL": "https://img.longhub.top/posts/bdf5394e-bbb9-4412-988c-3566ee14fbe2.png",
-  "imagePath": "/opt/longhub/media/posts/bdf5394e-bbb9-4412-988c-3566ee14fbe2.png"
+    "id": "bdf5394e-bbb9-4412-988c-3566ee14fbe2",
+    "text": "wcnm",
+    "image": "bdf5394e-bbb9-4412-988c-3566ee14fbe2.png",
+    "imageHash": "1000000000111001011011101011110010001100111101100110010111000101",
+    "imageURL": "https://r2.longhub.top/posts/bdf5394e-bbb9-4412-988c-3566ee14fbe2.png",
+    "rating": "none",
+    "createdAt": "2024-03-28T14:21:46.000Z",
+    "updatedAt": "2024-03-28T14:21:46.000Z",
+    "uploaderId": 1,
+    "tags": []
 }
 
 ```
 :::
 
-### DELETE `/api/post/\[id\]`
+### DELETE `/api/post/[id]`
 
 Deletes a post.
 
@@ -323,21 +347,18 @@ Route parameters:
 | :---: | :---------------: |
 | `id`  | Post ID to delete |
 
-Response type: `"ok"`
+Response: `204 No Content`
 
 ::: details Example
 Request:
 ```http
 DELETE https://longhub.top/api/post/7b702e5e-a0c1-4e47-8375-5c0666db761b
-X-Access-Key: 7GuleLzyd2hI4EIESC425SJXI_GZJ_PcScQgn_kCjCU
+X-Access-Key: <OMITTED>
 ```
 
 Response:
 ```http
-HTTP/1.1 200 OK
-content-type: application/json
-
-"ok"
+HTTP/1.1 204 No Content
 ```
 :::
 
@@ -358,99 +379,116 @@ Query parameters:
 Request body schema:
 
 ```typescript
-interface Selector {
-    type: 'text' | 'id' | 'tag' | 'uploader' | 'rating';
-                            // The type of the selector, also the post field that this constraint is applied to.
-    op?: string;            // See below for explainatory expressions.
-    value: string | number; // Right operand of the operation.
+type Selector = {
+    type: string;                   // Selector type. See below for details
+    op?: string | undefined;        // Operation applied to the selector
+    value?: string | undefined;     // Right operand of the expression
 };
-
-type RequetSchema = Selector[];
+type Order = {
+    key: 'createdAt' | 'uploaderId' | 'id',
+    direction?: 'asc' | 'desc'
+};
+type SearchRequest = {
+    filter?: Selector[];
+    order?: Order[];
+};
 ```
 
 Response type:
 
 ```typescript
-type PostSearchResponse = {
+type SearchReseponse = {
     count: number;
     data: Post[];
-}
+};
 ```
 
-#### Text selector
+#### Filtering
+
+The `filter` field specifies the condition applied on the posts. An empty `filter` array will cause a schema validation error.  
+Each item of `filter` must be of the following type:
 
 ```typescript
-interface TextSelector extends Selector {
+type Selector = {
     type: 'text';
     op: 'contains' | 'not_contains';
     value: string;
-}
-```
-
-Operators:
-- `contains`: `post.text.contains(value)`
-- `not_contains`: `!post.text.contains(value)`
-
-#### ID selector
-
-```typescript
-interface IDSelector extends Selector {
+} | {
     type: 'id';
     op: 'contains';
     value: string;
-}
-```
-
-Operators:
-- `contains`: `post.id.contains(value)`
-
-#### Tag selector
-
-```typescript
-interface TagSelector extends Selector {
+} | {
     type: 'tag';
     op: 'include' | 'exclude';
     value: string;
+} | {
+    type: 'rating';
+    value: Rating;
+} | {
+    type: 'createdAt' | 'updatedAt';
+    op: 'gt' | 'gte' | 'ge' | 'lt' | 'lte' | 'le' | 'eq' | 'ne';
+    value: `${number}-${number}-${number}`;     // *1
+} | {
+    type: 'system';
+    op: 'untagged' | 'disowned';                // *2
 }
 ```
 
-Operators: 
-- `include`: `post.tags.some(tag => tag.name == value)`
-- `exclude`: `post.tags.all(tag => tag.name != value)`
+Note:
+1. The `value` field of date selector must be either of form `YYYY-MM-DD` or of form `YYYY-MM-DDTHH:mm:SSZ`, and must be a valid date. Otherwise a validation error will be returned. **Timezone offsets are not allowed (like `2020-01-01T00:00:00+02:00`)**  
+2. `disowned` operator matches posts that do not have an owner. This type of posts do exist because in early stages of LONG Hub there was no users and uploading was done without authentication.
 
+#### Ordering
 
-#### Rating selector
+The `order` specifies the order of the response.  
+
+Each item of `order` must be of the following type:
 
 ```typescript
-interface RatingSelector extends Selector {
-    type: 'rating';
-    op: 'eq';
-    value: Rating;
-}
+type Order = {
+    key: 'createdAt' | 'uploaderId' | 'id',
+    direction?: 'asc' | 'desc'
+};
 ```
 
-Operators:
-- `eq`: `post.rating == value`
+The `direction` field of an item will default to `asc` if not specified.
+The `order` field will default to the following value if not specified:  
+
+```json
+[
+    {
+        "key": "id",
+        "direction": "asc"
+    }
+]
+```
 
 :::details Example
-Search for posts that are tagged with `monochrome`, rated as moderate, limited to 1 result:
+Search for posts that are tagged with `monochrome`, rated as moderate, limited to 1 result, and sort by creation date in ascending order:
 
 ```http
 POST https://longhub.top/api/post/search?limit=1
 Content-Type: application/json
 
-[
-    {
-        "type": "tag",
-        "op": "include",
-        "value": "monochrome"
-    },
-    {
-        "type": "rating",
-        "op": "eq",
-        "value": "moderate"
-    }
-]
+{
+    "filter": [
+        {
+            "type": "tag",
+            "op": "include",
+            "value": "monochrome"
+        },
+        {
+            "type": "rating",
+            "value": "moderate"
+        }
+    ],
+    "order": [
+        {
+            "key": "createdAt",
+            "direction": "asc"
+        }
+    ]
+}
 ```
 
 Response:
@@ -459,22 +497,36 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-  "count": 831,
-  "data": [
-    {
-      "id": "00059cd3-c340-40e8-927b-301ad116bf18",
-      "text": "你这打mai的傻逼",
-      "image": "00059cd3-c340-40e8-927b-301ad116bf18.jpg",
-      "imageHash": "0011111000010111001100001101101010010000111110000001011010100001",
-      "rating": "moderate",
-      "createdAt": "2023-12-29T13:45:24.000Z",
-      "updatedAt": "2024-02-05T05:22:49.000Z",
-      "uploaderId": null,
-      "uploader": null,
-      "imageURL": "https://img.longhub.top/posts/00059cd3-c340-40e8-927b-301ad116bf18.jpg",
-      "imagePath": "/opt/longhub/media/posts/00059cd3-c340-40e8-927b-301ad116bf18.jpg"
-    }
-  ]
+    "count": 402,
+    "data": [
+        {
+            "id": "00059cd3-c340-40e8-927b-301ad116bf18",
+            "text": "你这打mai的傻逼",
+            "image": "00059cd3-c340-40e8-927b-301ad116bf18.jpg",
+            "imageURL": "https://r2.longhub.top/posts/00059cd3-c340-40e8-927b-301ad116bf18.jpg",
+            "imageHash": "0011111000010111001100001101101010010000111110000001011010100001",
+            "aggr": 3,
+            "rating": "moderate",
+            "createdAt": "2023-12-29T13:45:24.000Z",
+            "updatedAt": "2024-02-05T05:22:49.000Z",
+            "uploaderId": null,
+            "tags": [
+                {
+                    "id": 6,
+                    "name": "monochrome"
+                },
+                {
+                    "id": 7,
+                    "name": "mug"
+                },
+                {
+                    "id": 8,
+                    "name": "maimai"
+                }
+            ],
+            "uploader": null
+        }
+    ]
 }
 ```
 :::
@@ -494,15 +546,15 @@ Request body:
 Response schema:
 
 ```typescript
-interface SimilarPost {
+type SimilarPost = {
     id: string;
     image: string;
     imageURL: string;
-    diff: number;
+    diff: number;       // Number of bits that are different from the request image
 };
 
 type ResponseSchema = {
-    hash: string;   // A 64-char 01 string.
+    hash: string;   // The hash of the incoming image
     similar: SimilarPost[];
 }
 ```
@@ -531,7 +583,7 @@ Response:
         {
             "id": "fb852b83-71c7-4fb0-ab50-7e5eef044965",
             "image": "fb852b83-71c7-4fb0-ab50-7e5eef044965.jpg",
-            "imageURL": "https://img.longhub.top/posts/fb852b83-71c7-4fb0-ab50-7e5eef044965.jpg",
+            "imageURL": "https://r2.longhub.top/posts/fb852b83-71c7-4fb0-ab50-7e5eef044965.jpg",
             "diff": 0
         }
     ]

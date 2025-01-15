@@ -19,7 +19,7 @@ Accepts: `application/json`
 Request body:
 
 ```typescript
-{
+type LoginRequest = {
     username: string,
     password: string
 }
@@ -28,7 +28,7 @@ Request body:
 Response:  
 
 ```typescript
-type ResponseSchema = User | string;
+type LoginResponse = Self;
 ```
 
 Status codes & response types:
@@ -84,10 +84,7 @@ Requires authentication.
 Response type: 
 
 ```typescript
-type AccountResponse = User & {
-    accessKey: string;
-    permission: number;
-};
+type AccountResponse = Self;
 ```
 
 :::details Example
@@ -127,8 +124,8 @@ Requires authentication.
 Response:
 
 ```typescript
-{
-    accessKey: string;      // New access key
+type ResetResponse = {
+    accessKey: string;
 }
 ```
 

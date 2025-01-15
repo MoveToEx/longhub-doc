@@ -12,9 +12,6 @@ Read [Schema](schema.html) first if you haven't read it.
 
 ## GET `/api/post/tag`
 
-No permission required.  
-No parameter required.
-
 Response type:  
 
 ```typescript
@@ -23,9 +20,7 @@ type TagsResponse = (Tag & {
 })[];
 ```
 
-## GET `/api/post/tag/\[name\]`
-
-No permission required.
+## GET `/api/post/tag/[name]`
 
 Route parameters:
 

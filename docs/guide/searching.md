@@ -9,9 +9,13 @@ Currently, the following selector segment syntaxes are supported:
 - `<text>` Search for images that has %text as a part of its text.
 - `+<tag>` Search for images that has %tag in its tags.
 - `-<tag>` Exclude images tagged with %tag from search result.
-- `@<id>` Search for images with id. Wildcard(*) is supported.
+- `id:<id>` Search for images that contains %id.
 - `uploader:<username>`: Search for posts uploaded by %username.
 - `rating:<rating>`: Search for posts rated as %rating. Can be `n` for `none`, `m` for moderate and `v` for violent.
+- `r:<...>`: Alias for `rating:...`
+- `system:untagged`: Search for posts that have no tags.
+- `system:disowned`: Search for posts that do not have an owner.
+- `sys:<...>`: Alias for `system:...`
 
 Note: `<var>` means `var` is a mandatory field.
 

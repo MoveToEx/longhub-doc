@@ -3,13 +3,16 @@ title: Authentication
 description: How to prove your identity
 ---
 
-# Authentication
+::: tip
+Endpoints do not require authentication unless explicitly specified.
+:::
 
+# Authentication
 
 There are two ways to authenticate on LONG Hub: Access key and login session.  
 
-If you are accessing an endpoint that requires authentication but you are not logged in, or have provided invalid credential(access key), the server will respond with `401 Unauthorized`.  
-If your credential is valid, but the associated account doesn't have permission required by an operation, the server will respond with `403 Forbidden`.  
+If you are accessing an endpoint that requires authentication but no valid credential is available (i.e. you are not logged in and your access key is invalid), the server will respond with `401 Unauthorized`.  
+If your credential is valid, but the associated account doesn't have permission required by the operation, the server will respond with `403 Forbidden`.  
 
 ## Access key
 
@@ -28,19 +31,34 @@ X-Access-Key: <KEY>
 ...
 ```
 
+or with [Python](https://www.python.org/):
+
+```py{7}
+from aiohttp import ClientSession
+from asyncio import run
+
+async def main():
+    async with ClientSession() as session:
+        async with session.get('https://longhub.top/api/account', headers={
+            'X-Access-Key': '<KEY>'
+        }) as response:
+            print(await response.read())
+
+run(main())
+```
+
 With invalid access key, the server responds with a `401 Unauthorized`.  
 
 ::: warning
-Treat your access key as you would do your password.  
-If you encounter a compromise, reset your access key at account page.
+Treat your access key as you would do to your password.  
+If you encounter a compromise, reset your access key on your account page or use the [`GET /api/account/reset-key`](account.html#get-api-account-reset-key) endpoint. This will immediately invalidate your current access key.
 :::
 
-## Login session
+## Cookies
 
-This is also the way you get authenticated when using web client of LONG Hub.  
-Although web client uses the Server Actions of Next.js, they all identify users by cookies.  
+LONG Hub stores session data in a cookie named `nmsl_cookie`. 
 
-Refer to [`POST` /api/account/login](account.html#post-api-account-login) for more details.
-
-Sessions on LONG Hub are stateless, which means sessions cannot be directly manipulated on the server. All the session data is encrypted, signed, and saved to the cookie named `nmsl_cookie`.  
+Sessions on LONG Hub are stateless, which means sessions cannot be manipulated by the server if not in request context. All the session data is encrypted, signed, and saved to the cookie named `nmsl_cookie`.  
 To log out, simply clear the cookie named `nmsl_cookie`.
+
+The [`POST` /api/account/login](account.html#post-api-account-login) endpoint will leave session data in `nmsl_cookie` if the credential is valid.

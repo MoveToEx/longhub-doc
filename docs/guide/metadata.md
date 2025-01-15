@@ -43,6 +43,6 @@ Rating describes how violently insulting an image is.
 There was another field called `aggr` that used to achieve similar functions. But `aggr` had 20 possible values, while `rating` has only 3. This replacement happened so as to eliminate discrepancy between users regarding how insulting an image is.
 
 - Must be one of `none`, `moderate`, `violent`.
-- If an image is considered neutral or friendly and does not convey any form of aggression, rate it as `none`.
+- If an image is considered neutral or friendly and does not impose any form of insult on the other party, rate it as `none`.
 - If an image uses relatively mild disapproving tone, rate it as `moderate`.
-- If an image uses fierce words to abuse others, rate it as `violent`.
+- If an image uses fierce words to insult others, rate it as `violent`.
